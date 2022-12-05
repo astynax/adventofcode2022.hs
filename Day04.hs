@@ -5,7 +5,8 @@ module Day04 where
 
 import Data.Char
 import Data.Set qualified as Set
-import Text.ParserCombinators.ReadP -- Why not?
+
+import ReadP -- Why not?
 
 type Pair = ((Int, Int), (Int, Int))
 
@@ -34,9 +35,7 @@ toSets ((f1, t1), (f2, t2)) = (s1, s2)
     s2 = Set.fromList [f2 .. t2]
 
 decode :: String -> Pair
-decode s = case readP_to_S lineP s of
-  [(x, "")] -> x
-  x -> error $ "Can't parse " <> show x
+decode = tryReadP "line" lineP
 
 lineP :: ReadP Pair
 lineP = (,) <$> rangeP <* char ',' <*> rangeP

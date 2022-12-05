@@ -3,11 +3,11 @@
 
 module Day05 where
 
-import Data.Char (isDigit)
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
 import Data.List (foldl', sort)
-import Text.ParserCombinators.ReadP
+
+import ReadP
 
 type Stacks = Map Int [Char]
 type Move = (Int, Int, Int)
@@ -26,19 +26,11 @@ decode xs = case break null xs of
   _ -> error "Can't split stack and moves"
 
 decodeMove :: String -> Move
-decodeMove s = case readP_to_S moveP s of
-  [(m, "")] -> m
-  _         -> error $ "Can't decode " <> s
-  where
-    moveP = do
-      _ <- string "move "
-      n <- intP
-      _ <- string " from "
-      f <- intP
-      _ <- string " to "
-      t <- intP
-      pure (n, f, t)
-    intP = read <$> munch1 isDigit
+decodeMove =
+  tryReadP "move" $ (,,)
+  <$> (string "move "  *> intP)
+  <*> (string " from " *> intP)
+  <*> (string " to "   *> intP)
 
 decodeStacks :: [String] -> Stacks
 decodeStacks = build . reverse . map (fromLine 1)
