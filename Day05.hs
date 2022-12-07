@@ -1,7 +1,4 @@
-{-# OPTIONS -Wall #-}
-{-# LANGUAGE ImportQualifiedPost #-}
-
-module Day05 where
+module Main where
 
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map

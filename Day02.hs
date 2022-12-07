@@ -1,4 +1,4 @@
-module Day02 where
+module Main where
 
 type Round = (RSP, (RSP, Game))
 data Game = Won | Lose | Draw deriving (Eq)

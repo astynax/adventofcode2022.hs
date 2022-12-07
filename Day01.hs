@@ -1,4 +1,5 @@
-module Day01 where
+module Main where
+
 import Data.List (sort)
 
 main :: IO ()

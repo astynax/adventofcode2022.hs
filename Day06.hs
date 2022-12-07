@@ -1,7 +1,4 @@
-{-# OPTIONS -Wall #-}
-{-# LANGUAGE ImportQualifiedPost #-}
-
-module Day06 where
+module Main where
 
 import Data.Set qualified as Set
 import Data.List (tails)
