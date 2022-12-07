@@ -1,0 +1,4 @@
+
+executable dayDAY
+    import:           task
+    main-is:          DayDAY.hs
