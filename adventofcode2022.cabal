@@ -8,6 +8,7 @@ common defaults
     default-language:   Haskell2010
     default-extensions: BlockArguments
                       , ImportQualifiedPost
+                      , TupleSections
     build-depends:      base ^>=4.14.3.0
                       , megaparsec
                       , containers
@@ -53,3 +54,7 @@ executable day06
 executable day07
     import:           task
     main-is:          Day07.hs
+
+executable day08
+    import:           task
+    main-is:          Day08.hs
