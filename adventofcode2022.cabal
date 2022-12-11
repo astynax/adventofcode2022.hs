@@ -9,9 +9,12 @@ common defaults
     default-extensions: BlockArguments
                       , ImportQualifiedPost
                       , TupleSections
+                      , TypeApplications
+                      , LambdaCase
     build-depends:      base ^>=4.14.3.0
                       , megaparsec
                       , containers
+                      , text
     ghc-options:        -Wall
 
 common task
@@ -67,3 +70,7 @@ executable day09
 executable day10
     import:           task
     main-is:          Day10.hs
+
+executable day11
+    import:           task
+    main-is:          Day11.hs
