@@ -15,6 +15,7 @@ common defaults
                       , megaparsec
                       , containers
                       , text
+                      , unordered-containers
     ghc-options:        -Wall
 
 common task
@@ -26,7 +27,8 @@ library
     import:           defaults
     default-language: Haskell2010
     hs-source-dirs:   lib
-    exposed-modules:  Megaparsec
+    exposed-modules:  Map2d
+                    , Megaparsec
                     , Pos
                     , ReadP
     ghc-options:     -Wall
@@ -74,3 +76,8 @@ executable day10
 executable day11
     import:           task
     main-is:          Day11.hs
+
+executable day12
+    import:           task
+    main-is:          Day12.hs
+    build-depends:    astar

@@ -1,8 +1,10 @@
 module Pos
   ( Pos
   , Direction(..)
-  , moveTo
+  , moveTo, whichDirection
   , drawSetOf
+  , levi
+  , neibs
   ) where
 
 import Data.Set (Set)
@@ -19,6 +21,15 @@ moveTo d (x, y) = case d of
   L -> (x - 1, y)
   R -> (x + 1, y)
 
+whichDirection :: Pos -> Pos -> Maybe Direction
+whichDirection (x1, y1) (x2, y2) =
+  case (x2 - x1, y2 - y1) of
+    ( 1, 0) -> Just R
+    (-1, 0) -> Just L
+    (0,  1) -> Just D
+    (0, -1) -> Just U
+    _       -> Nothing
+
 drawSetOf :: (Bool -> Char) -> Set Pos -> IO ()
 drawSetOf chunk s = mapM_ row [minimum ys .. maximum ys]
   where
@@ -27,3 +38,14 @@ drawSetOf chunk s = mapM_ row [minimum ys .. maximum ys]
     ps = Set.toList s
     xs = map fst ps
     ys = map snd ps
+
+levi :: Pos -> Pos -> Int
+levi (x1, y1) (x2, y2) = abs (x1 - x2) + abs (y1 - y2)
+
+neibs :: Pos -> [Pos]
+neibs (x, y) =
+  [ (x, y - 1)
+  , (x, y + 1)
+  , (x - 1, y)
+  , (x + 1, y)
+  ]
