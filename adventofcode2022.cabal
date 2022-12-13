@@ -81,3 +81,7 @@ executable day12
     import:           task
     main-is:          Day12.hs
     build-depends:    astar
+
+executable day13
+    import:           task
+    main-is:          Day13.hs
