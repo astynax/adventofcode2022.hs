@@ -5,6 +5,8 @@ module Pos
   , drawSetOf
   , levi
   , neibs
+  , fill
+  , dimensions
   ) where
 
 import Data.Set (Set)
@@ -31,13 +33,11 @@ whichDirection (x1, y1) (x2, y2) =
     _       -> Nothing
 
 drawSetOf :: (Bool -> Char) -> Set Pos -> IO ()
-drawSetOf chunk s = mapM_ row [minimum ys .. maximum ys]
+drawSetOf chunk s = mapM_ row (uncurry range ry)
   where
-    row y = mapM_ (cell y) [minimum xs .. maximum xs] >> putChar '\n'
+    row y = mapM_ (cell y) (uncurry range rx) >> putChar '\n'
     cell y x = putChar . chunk $ Set.member (x, y) s
-    ps = Set.toList s
-    xs = map fst ps
-    ys = map snd ps
+    (rx, ry) = dimensions s
 
 levi :: Pos -> Pos -> Int
 levi (x1, y1) (x2, y2) = abs (x1 - x2) + abs (y1 - y2)
@@ -49,3 +49,20 @@ neibs (x, y) =
   , (x - 1, y)
   , (x + 1, y)
   ]
+
+fill :: Pos -> Pos -> [Pos]
+fill (x1, y1) (x2, y2) = (,) <$> range x1 x2 <*> range y1 y2
+
+range :: Int -> Int -> [Int]
+range f t
+  | f < t     = [f .. t]
+  | otherwise = [t .. f]
+
+dimensions :: Set Pos -> (Pos, Pos)
+dimensions s =
+  ( (minimum xs, maximum xs)
+  , (minimum ys, maximum ys) )
+  where
+    ps = Set.toList s
+    xs = map fst ps
+    ys = map snd ps
