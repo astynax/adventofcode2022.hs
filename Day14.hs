@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE BangPatterns #-}
 
 module Main where
 
 import Data.List (foldl')
+import Control.Monad (guard)
 
 import Data.Set (Set)
 import Data.Set qualified as Set
@@ -39,27 +39,20 @@ toCave = foldl' (flip Set.insert) Set.empty . concatMap trace
 dropOne :: (Pos -> Cave -> Maybe Cave) -> Int -> Cave -> Maybe Cave
 dropOne handleFloor floorLevel !cave = go source
   where
-    free pos
-      | pos `Set.member` cave = Nothing
-      | otherwise            = Just pos
+    probe pos = pos <$ guard (not $ pos `Set.member` cave)
     go pos@(x, y)
-      | pos `Set.member` cave = Nothing
       | y > floorLevel = handleFloor pos cave
-      | otherwise = case (dl, d, dr) of
-        (_, Just p, _) -> go p
-        (Just p, _, _) -> go p
-        (_, _, Just p) -> go p
-        _              -> Just $ Set.insert pos cave
-        where
-          dl = free (x - 1, y + 1)
-          d  = free (x, y + 1)
-          dr = free (x + 1, y + 1)
+      | otherwise =
+        probe pos >> maybe (Just $ Set.insert pos cave) go (
+          probe (x,     y + 1) <|>
+          probe (x - 1, y + 1) <|>
+          probe (x + 1, y + 1) )
 
 solution1 :: Cave -> Int
-solution1 = run (\_ _ -> Nothing)
+solution1 = run \_ _ -> Nothing
 
 solution2 :: Cave -> Int
-solution2 = run ((Just .) . Set.insert)
+solution2 = run $ (Just .) . Set.insert
 
 run :: (Pos -> Cave -> Maybe Cave) -> Cave -> Int
 run handleFloor start = go 0 start
@@ -79,7 +72,7 @@ maxY :: Cave -> Int
 maxY = maximum . map snd . Set.toList
 
 draw :: Cave -> IO ()
-draw = drawSetOf (\x -> if x then '#' else '.')
+draw = drawSetOf \x -> if x then '#' else '.'
 
 animate :: (Pos -> Cave -> Maybe Cave) -> Cave -> IO ()
 animate handleFloor start = go start
