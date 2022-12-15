@@ -32,11 +32,11 @@ whichDirection (x1, y1) (x2, y2) =
     (0, -1) -> Just U
     _       -> Nothing
 
-drawSetOf :: (Bool -> Char) -> Set Pos -> IO ()
+drawSetOf :: (Pos -> Bool -> Char) -> Set Pos -> IO ()
 drawSetOf chunk s = mapM_ row (uncurry range ry)
   where
     row y = mapM_ (cell y) (uncurry range rx) >> putChar '\n'
-    cell y x = putChar . chunk $ Set.member (x, y) s
+    cell y x = putChar . chunk (x, y) $ ((x, y) `Set.member` s)
     (rx, ry) = dimensions s
 
 manhattan :: Pos -> Pos -> Int

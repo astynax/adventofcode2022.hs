@@ -72,7 +72,7 @@ maxY :: Cave -> Int
 maxY = maximum . map snd . Set.toList
 
 draw :: Cave -> IO ()
-draw = drawSetOf \x -> if x then '#' else '.'
+draw = drawSetOf \_ x -> if x then '#' else '.'
 
 animate :: (Pos -> Cave -> Maybe Cave) -> Cave -> IO ()
 animate handleFloor start = go start
