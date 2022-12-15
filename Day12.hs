@@ -43,7 +43,7 @@ solution2 (_, end, m) = minimum $ mapMaybe (solution1 . (,end,m)) starts
 
 search :: Input -> Maybe [Pos]
 search (start, end, m) =
-  aStar fork (\_ _ -> 1) (levi end) (== end) start
+  aStar fork (\_ _ -> 1) (manhattan end) (== end) start
   where
     fork pos =
       case Map.lookup pos m of

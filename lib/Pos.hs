@@ -3,7 +3,7 @@ module Pos
   , Direction(..)
   , moveTo, whichDirection
   , drawSetOf
-  , levi
+  , manhattan
   , neibs
   , fill
   , dimensions
@@ -39,8 +39,8 @@ drawSetOf chunk s = mapM_ row (uncurry range ry)
     cell y x = putChar . chunk $ Set.member (x, y) s
     (rx, ry) = dimensions s
 
-levi :: Pos -> Pos -> Int
-levi (x1, y1) (x2, y2) = abs (x1 - x2) + abs (y1 - y2)
+manhattan :: Pos -> Pos -> Int
+manhattan (x1, y1) (x2, y2) = abs (x1 - x2) + abs (y1 - y2)
 
 neibs :: Pos -> [Pos]
 neibs (x, y) =
