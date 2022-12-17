@@ -102,3 +102,4 @@ executable day16
 executable day17
     import:           task
     main-is:          Day17.hs
+    build-depends:    hashable
