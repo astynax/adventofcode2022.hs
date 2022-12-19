@@ -3,10 +3,8 @@
 
 module Main where
 
+import Data.List
 import Data.Monoid
-
-import Control.Monad.State.Strict
-import Data.Map.Strict qualified as Map
 
 import Megaparsec
 
@@ -26,18 +24,15 @@ newtype Robot = Robot S4 deriving (Show, Semigroup, Monoid)
 
 main :: IO ()
 main = do
-  es <- decode <$> readFile "Day19.example"
-  -- print . zip [1 :: Int ..] $ map (simulate 24) es
-  -- -- [(1,9),(2,12)]
-  print $ map (simulate 32) es
-  -- -- [42, 62] FIXME: should be [56, 62]
-
   bps <- decode <$> readFile "Day19.input"
-  -- print . zip [1 :: Int ..] $ map (simulate 24) bps
-  print . map (simulate 32) $ take 3 bps
+  print $ solution1 bps -- 1404
+  print $ solution2 bps -- 5880
 
-  print . sum $ map (uncurry (*)) firstResults -- 1404
-  print $ product secondResults                -- 31
+solution1 :: [Blueprint] -> Int
+solution1 = sum . zipWith (*) [1..] . map (bfs 24)
+
+solution2 :: [Blueprint] -> Int
+solution2 = product . map (bfs 32) . take 3
 
 decode :: String -> [Blueprint]
 decode = tryParse inputP "input"
@@ -85,39 +80,20 @@ getIncome (Robot r) (Stash s) = Stash $ s <> r
 toList :: C4 a -> [a]
 toList (C4 a b c d) = [a, b, c, d]
 
-simulate :: Int -> Blueprint -> Int
-simulate minutes bp =
-  (Map.! 0)
-  $ go minutes (Robot (C4 1 0 0 0)) (Stash mempty)
-  `execState` Map.empty
+bfs :: Int -> Blueprint -> Int
+bfs minutes bp = go minutes [(Robot (C4 1 0 0 0), Stash mempty)]
   where
-    go !t !robots stash@(Stash (C4 (Sum o) _ _ (Sum s)))
-      | t == 0    = modify $ Map.insertWith max t s
-      | otherwise = do
-        continue <- gets (Map.lookup t) >>= \case
-          Nothing -> pure True
-          Just p  -> pure $ p <= s
-        when continue do
-          modify $ Map.insert t s
-          sequence_
-            [ go (t - 1) (robots <> r) (getIncome robots s')
-            | (r, s') <- build bp stash ]
-          when (o < 6)
-            $ go (t - 1) robots (getIncome robots stash)
-
-firstResults :: [(Int, Int)]
-firstResults =
-  [ (1, 1), (2, 0), (3, 4), (4, 5), (5, 5)
-  , (6, 4), (7, 1), (8, 1), (9, 8), (10, 6)
-  , (11, 3), (12, 15), (13, 1), (14, 5), (15, 9)
-  , (16, 3), (17, 0), (18, 5), (19, 0), (20, 6)
-  , (21, 1), (22, 0), (23, 0), (24, 6), (25, 2)
-  , (26, 6), (27, 0), (28, 1), (29, 3), (30, 0)
-  ]
-
-secondResults :: [Int]
-secondResults =
-  [ 21
-  , 7
-  , 40 -- FIXME: why it is 31 now?
-  ]
+    go !t plan
+      | t == 0    =
+        case plan of
+          ((_, Stash (C4 _ _ _ (Sum o))) : _) -> o
+          _ -> error "Impossible"
+      | otherwise =
+        go (t - 1) . take 1000 . sortOn key $ concatMap fork plan
+    key (r, s) =
+      let Stash (C4 o c d g) = getIncome r s
+      in negate (g * 1000000 + d * 10000 + c * 100 + o)
+    fork (robots, stash) =
+      (robots, getIncome robots stash)
+      : [ (robots <> r, getIncome robots s)
+        | (r, s) <- build bp stash ]
