@@ -12,11 +12,13 @@ common defaults
                       , TypeApplications
                       , LambdaCase
                       , BangPatterns
+                      , FlexibleContexts
     build-depends:      base ^>=4.14.3.0
                       , megaparsec
                       , containers
                       , text
                       , unordered-containers
+                      , mtl
     ghc-options:        -Wall
 
 common task
@@ -107,3 +109,7 @@ executable day17
 executable day18
     import:           task
     main-is:          Day18.hs
+
+executable day19
+    import:           task
+    main-is:          Day19.hs

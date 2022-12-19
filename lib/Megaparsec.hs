@@ -5,7 +5,7 @@ module Megaparsec
   , integerP
   ) where
 
-import Text.Megaparsec as MP hiding (Pos)
+import Text.Megaparsec as MP hiding (Pos, State)
 import Text.Megaparsec.Char as MP
 import Text.Megaparsec.Char.Lexer as MP (decimal)
 import Data.Void (Void)
