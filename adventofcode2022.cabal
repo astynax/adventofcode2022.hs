@@ -117,3 +117,7 @@ executable day19
 executable day20
     import:           task
     main-is:          Day20.hs
+
+executable day21
+    import:           task
+    main-is:          Day21.hs
