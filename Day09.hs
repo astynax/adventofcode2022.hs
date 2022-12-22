@@ -34,7 +34,7 @@ run start@(_, st) = go (Set.fromList st) start
     go !vs r       []          = (r, vs)
     go !vs r       ((_, 0):ms) = go vs r ms
     go !vs (h, ts) ((d, n):ms) =
-      let h'  = moveTo d h
+      let h'  = moveToFlipped d h
           ts' = pullTheTail h' ts
       in go (Set.insert (last ts') vs) (h', ts') ((d, n - 1) : ms)
 

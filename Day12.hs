@@ -24,7 +24,7 @@ main = do
 
 decode :: String -> Maybe Input
 decode s =
-  let m = Map2d.build id s
+  let m = Map2d.build (const Just) s
   in do
     start <- Map2d.whereIs 'S' m
     end <- Map2d.whereIs 'E' m

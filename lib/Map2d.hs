@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module Map2d
   ( Map2d
   , build
@@ -17,11 +19,17 @@ import Pos qualified
 
 type Map2d = Map Pos
 
-build :: (Char -> a) -> String -> Map2d a
-build f = foldl' buildRow Map.empty . zip [0..] . lines
-  where
-    buildRow m (y, row) = foldl' (step y) m $ zip [0..] row
-    step y m (x, c) = Map.insert (x, y) (f c) m
+class ToMap2d t where
+  build :: (Pos -> Char -> Maybe a) -> t -> Map2d a
+
+instance ToMap2d String where
+  build f = build f . lines
+
+instance ToMap2d [String] where
+  build f = foldl' buildRow Map.empty . zip [0..]
+    where
+      buildRow m (y, row) = foldl' (step y) m $ zip [0..] row
+      step y m (x, c) = maybe m (Map.insert (x, y) `flip` m) $ f (x, y) c
 
 whereIs :: Eq a => a -> Map2d a -> Maybe Pos
 whereIs v m = case filter ((== v) . snd) (Map.toList m) of
@@ -33,8 +41,9 @@ neibs pos m = mapMaybe check $ Pos.neibs pos
   where
     check k = (k,) <$> Map.lookup k m
 
-visualize :: Map2d Char -> [Pos] -> IO ()
-visualize m path = draw $ foldl' update m $ zip path (tail path)
+visualize :: Char -> Map2d Char -> [Pos] -> IO ()
+visualize empty m path =
+  draw empty $ foldl' update m $ zip path (tail path)
   where
     update acc (old, new) = Map.insert old d acc
       where
@@ -47,11 +56,11 @@ visualize m path = draw $ foldl' update m $ zip path (tail path)
             error $ "Impossible jump from "
             <> show old <> " to " <> show new
 
-draw :: Map2d Char -> IO ()
-draw m = mapM_ row [minimum ys .. maximum ys]
+draw :: Char -> Map2d Char -> IO ()
+draw empty m = mapM_ row [minimum ys .. maximum ys]
   where
     row y = mapM_ (cell y) [minimum xs .. maximum xs] >> putChar '\n'
-    cell y x = putChar . fromMaybe '.' $ Map.lookup (x, y) m
+    cell y x = putChar . fromMaybe empty $ Map.lookup (x, y) m
     ps = map fst $ Map.toList m
     xs = map fst ps
     ys = map snd ps

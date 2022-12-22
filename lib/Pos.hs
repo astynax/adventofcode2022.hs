@@ -1,7 +1,8 @@
 module Pos
   ( Pos
   , Direction(..)
-  , moveTo, whichDirection
+  , Turn(..), turn
+  , moveTo, moveToFlipped, whichDirection
   , drawSetOf
   , manhattan
   , neibs
@@ -15,11 +16,19 @@ import Data.Set qualified as Set
 type Pos = (Int, Int)
 
 data Direction = U | D | L | R deriving (Eq, Show, Read)
+data Turn = TR | TL deriving Show
+
+moveToFlipped :: Direction -> Pos -> Pos
+moveToFlipped d (x, y) = case d of
+  U -> (x, y + 1)
+  D -> (x, y - 1)
+  L -> (x - 1, y)
+  R -> (x + 1, y)
 
 moveTo :: Direction -> Pos -> Pos
 moveTo d (x, y) = case d of
-  U -> (x, y + 1)
-  D -> (x, y - 1)
+  U -> (x, y - 1)
+  D -> (x, y + 1)
   L -> (x - 1, y)
   R -> (x + 1, y)
 
@@ -66,3 +75,13 @@ dimensions s =
     ps = Set.toList s
     xs = map fst ps
     ys = map snd ps
+
+turn :: Turn -> Direction -> Direction
+turn TL U = L
+turn TL L = D
+turn TL D = R
+turn TL R = U
+turn TR U = R
+turn TR R = D
+turn TR D = L
+turn TR L = U
