@@ -5,7 +5,7 @@ module Pos
   , moveTo, moveToFlipped, whichDirection
   , drawSetOf
   , manhattan
-  , neibs
+  , neibs, neibs8
   , fill
   , dimensions
   ) where
@@ -57,6 +57,15 @@ neibs (x, y) =
   , (x, y + 1)
   , (x - 1, y)
   , (x + 1, y)
+  ]
+
+neibs8 :: Pos -> [Pos]
+neibs8 (x, y) =
+  neibs (x, y) <>
+  [ (x - 1, y - 1)
+  , (x + 1, y + 1)
+  , (x - 1, y + 1)
+  , (x + 1, y - 1)
   ]
 
 fill :: Pos -> Pos -> [Pos]
