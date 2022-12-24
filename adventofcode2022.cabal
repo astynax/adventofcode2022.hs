@@ -129,3 +129,9 @@ executable day22
 executable day23
     import:           task
     main-is:          Day23.hs
+
+executable day24
+    import:           task
+    main-is:          Day24.hs
+    build-depends:    astar
+                    , ansi-terminal
