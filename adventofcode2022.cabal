@@ -135,3 +135,7 @@ executable day24
     main-is:          Day24.hs
     build-depends:    astar
                     , ansi-terminal
+
+executable day25
+    import:           task
+    main-is:          Day25.hs
